@@ -28,7 +28,8 @@ class User(Base):
     parent_phone=Column(String(100))
     emergency_num=Column(String(100))
     date_of_join=Column(Date)
-    address_id=Column(Integer,ForeignKey('address.id'))
+    address_id=Column(Integer,ForeignKey('address.id', use_alter=True, name='fk_users_address_id'),
+    nullable=True)
     status = Column(TINYINT,default=1)
     created_at = Column(DateTime,default=datetime.now)
     created_by=Column(Integer,ForeignKey('users.id'))

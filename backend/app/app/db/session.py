@@ -5,12 +5,7 @@ from app.core.config import settings
 
 
 
-engine = create_engine(
-                    settings.DATA_BASE,
-                    connect_args={
-                        "encoding": "UTF-8",
-                        "nencoding": "UTF-8",}
-                    )
+engine = create_engine(settings.DATA_BASE)
 
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

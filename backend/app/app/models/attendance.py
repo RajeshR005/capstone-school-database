@@ -12,9 +12,9 @@ class Attendance(Base):
     # class_academic_id = Column(Integer, ForeignKey("class_academic_associations.id"))
 
     # 0 - Absent, 1 - Present, 2 - Half Morning, 3 - Half Afternoon, 4 - On Duty (OD)
-    status = Column(Integer, nullable=False)
-    check_in = Column(Time, nullable=True)  
-    check_out = Column(Time, nullable=True)  
+    status = Column(Integer)
+    check_in = Column(Time)  
+    check_out = Column(Time)  
     created_at = Column(DateTime, default=datetime.now)
     created_by = Column(Integer, ForeignKey('users.id'))
     modified_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
