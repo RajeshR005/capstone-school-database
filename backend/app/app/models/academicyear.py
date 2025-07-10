@@ -9,7 +9,6 @@ class AcademicYear(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     academic_year = Column(String(20))
-    is_current = Column(Integer,default=1)
     status = Column(Integer, default=1)
     start_date = Column(Date)
     end_date = Column(Date)

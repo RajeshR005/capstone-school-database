@@ -8,8 +8,8 @@ class Group(Base):
     __tablename__ = 'groups'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    group_name = Column(String(100), nullable=False)  # e.g., Biology, Computer Science, Commerce
-    description = Column(String(255), nullable=True)
+    group_name = Column(String(100))  # e.g., Biology, Computer Science, Commerce
+    description = Column(String(255))
 
     status = Column(Integer, default=1)
     created_at = Column(DateTime, default=datetime.now)
@@ -21,6 +21,7 @@ class Group(Base):
     modifier = relationship("User", foreign_keys=[modified_by], back_populates="modified_groups")
     class_academics = relationship("ClassAcademicAssociation", back_populates="group")
     fee_structures = relationship("FeeStructure", back_populates="group")
+    exam_allocations=relationship("ExamAllocation",back_populates="group")
     
 
 

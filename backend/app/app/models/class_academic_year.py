@@ -27,7 +27,7 @@ class ClassAcademicAssociation(Base):
     subject_allocations = relationship("SubjectAllocation", back_populates="class_academic")
     group = relationship("Group", back_populates="class_academics")
     students = relationship("StudentClass", back_populates="class_academic")
-    exam_allocations = relationship("ExamAllocation", back_populates="class_academic")
+    # exam_allocations = relationship("ExamAllocation", back_populates="class_academic")
     # attendance_records = relationship("Attendance", back_populates="class_academic")
     time_table_entries = relationship("TimeTable", back_populates="class_academic")
     # fee_structures = relationship("FeeStructure", back_populates="class_academic")

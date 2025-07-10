@@ -20,5 +20,5 @@ class Standard(Base):
     modifier = relationship("User", foreign_keys=[modified_by], back_populates="modified_standards")
     term_subject_resources = relationship("SubjectStandardTermResource", back_populates="standard")
     fee_structures = relationship("FeeStructure", back_populates="standard")
-    
+    exam_allocations=relationship("ExamAllocation",back_populates="standard")
 

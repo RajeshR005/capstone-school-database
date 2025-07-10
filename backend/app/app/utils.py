@@ -18,6 +18,9 @@ from app.models import *
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi import Depends,HTTPException,status
 from app.api.deps import get_db
+import smtplib
+from email.message import EmailMessage
+from app.core.config import settings
 bearer_scheme = HTTPBearer()
 
 tracemalloc.start()
@@ -34,9 +37,9 @@ tracemalloc.start()
    file_exe -> this is for backend purpose to store in database 
 """
 
-def file_storage(file_name, f_name):
+def file_storage(file_name, f_name,sub_folder):
 
-    base_dir = settings.BASE_UPLOAD_FOLDER+"/innov_ycc"
+    base_dir = settings.BASE_UPLOAD_FOLDER+sub_folder
 
     dt = str(int(datetime.now().timestamp()))
 
@@ -132,3 +135,29 @@ def create_access_token(auth: HTTPAuthorizationCredentials = Depends(bearer_sche
     
     return get_user
     
+"""The Below code is used to reset the password for the user with their email"""
+
+def send_email_otp(to: str, otp: str):
+    msg = EmailMessage()
+    msg["Subject"] = "Your OTP for Password Reset"
+    msg["From"] = settings.EMAIL_HOST_USER
+    msg["To"] = to
+    msg.set_content(f"""
+Hi,
+
+Your OTP for resetting your password is: {otp}
+
+This OTP will expire in 10 minutes. Do not share this code with anyone.
+
+Thanks,
+Prince Institute
+""")
+
+    try:
+        with smtplib.SMTP(settings.EMAIL_HOST, settings.EMAIL_PORT) as server:
+            server.starttls()
+            server.login(settings.EMAIL_HOST_USER, settings.EMAIL_HOST_PASSWORD)
+            server.send_message(msg)
+            print(f" OTP sent to {to}")
+    except Exception as e:
+        print(f" Failed to send email to {to}: {e}")

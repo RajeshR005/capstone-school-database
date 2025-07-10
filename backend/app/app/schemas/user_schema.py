@@ -1,7 +1,7 @@
 from pydantic import BaseModel, EmailStr
 from sqlalchemy import Date,Boolean
 from datetime import date,time,datetime,timedelta
-from typing import Optional
+from typing import List, Optional
 
 
 
@@ -43,6 +43,8 @@ class staff_data(BaseModel):
 
 
 class Student_data(BaseModel):
+    token:str
+    user_type:str
     first_name:str
     last_name:str
     date_of_birth:date
@@ -51,14 +53,14 @@ class Student_data(BaseModel):
     password:str
     phone_number:str
     blood_group:str
-    mother_tongue:str
+    mother_tongue:Optional[str]=None
     aadhaar_num:str
-    is_hosteller:bool
-    specially_abled_person:bool
-    umis_no:str
-    father_name:str
-    mother_name:str
-    parent_phone:str
+    is_hosteller:Optional[bool]=False
+    specially_abled_person:Optional[bool]=False
+    umis_no:Optional[str]=None
+    father_name:Optional[str]=None
+    mother_name:Optional[str]=None
+    parent_phone:Optional[str]=None
     emergency_num:str
     date_of_join:date
     
@@ -77,8 +79,29 @@ class Address_update(BaseModel):
 
 class Update_user(BaseModel):
     token:str
-    id:Optional[int]=None
-    user_type:str
+    user_type:Optional[str]=None
+    first_name:Optional[str]=None
+    last_name:Optional[str]=None
+    date_of_birth:Optional[date]=None
+    gender:Optional[str]=None
+    email:Optional[EmailStr]=None
+    phone_number:Optional[str]=None
+    blood_group:Optional[str]=None
+    mother_tongue:Optional[str]=None
+    aadhaar_num:Optional[str]=None
+    is_hosteller:Optional[bool]=None
+    specially_abled_person:Optional[bool]=None
+    umis_no:Optional[str]=None
+    father_name:Optional[str]=None
+    mother_name:Optional[str]=None
+    parent_phone:Optional[str]=None
+    emergency_num:Optional[str]=None
+    date_of_join:Optional[date]=None
+    
+    address:Optional[Address_update]=None
+
+class View_data_user(BaseModel):
+    user_type:Optional[str]=None
     first_name:Optional[str]=None
     last_name:Optional[str]=None
     date_of_birth:Optional[date]=None
@@ -101,6 +124,7 @@ class Update_user(BaseModel):
 
 
 
+
 # class Update_staff_and_student(BaseModel):
 #     password:Optional[str]=None
 #     phone_number:Optional[str]=None
@@ -119,3 +143,12 @@ class Update_user(BaseModel):
 
 class Email_in(BaseModel):
     email:EmailStr
+
+class StudentData(BaseModel):
+    student_id: int
+    roll_number: int
+
+class StudentClassList(BaseModel):
+    token: str
+    class_academic_year_id: int
+    students_data: List[StudentData]

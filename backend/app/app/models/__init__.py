@@ -26,3 +26,4 @@ from .term import Term
 from .timetable import TimeTable
 from .token import Apitoken
 from .user import User
+from .forgotpass import ForgotPasswordOTP

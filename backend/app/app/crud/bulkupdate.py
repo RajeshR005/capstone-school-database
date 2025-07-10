@@ -85,7 +85,7 @@ def create_bulk_students(
 
 
 @router.post('/create_bulk_staffs/{count}', description="Bulk create fake students")
-def create_bulk_staffs(count: int,db: Session = Depends(get_db),current_user: User = Depends(create_access_token)):
+def create_bulk_staffs(count: int,db: Session = Depends(get_db)):
     if current_user.role not in ["staff", "admin"]:
         return{"status":0,"msg":"You are not authorized Here "}
     
