@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, Form,requests
 from pydantic import EmailStr
 from sqlalchemy.orm import Session
 from app.models import *
-from app.api.deps import get_db,check_token_all
+from app.api.deps import get_db,check_token_all,token_generator
 from app.core.config import settings
 from app.core.security import get_password_hash,verify_password
 from datetime import datetime
@@ -74,41 +74,21 @@ async def login_user(db:Session=Depends(get_db),User_name:str=Form(...),Password
                                           User.email == User_name,
                                           User.phone_number == User_name),
                                       User.status ==1).first()
-    
+    if User_name is None :
+        return{"status":0,"msg":"User_name can't be empty"}
+    if Password is None:
+        return{"status":0,"msg":"Password can't be empty"}
     if not checkUser:
         return {"status":0,"msg":"invalid credentials"}
     password_verification = verify_password(Password,checkUser.password)
     if not password_verification:
         return {"status":0,"msg":"Invalid credentials"}
     else:
-        token_deactivate=db.query(Apitoken).filter(Apitoken.user_id==checkUser.id,Apitoken.status==1).first()
-        if token_deactivate:
-            token_deactivate.status=0
-            db.commit()
-
-        char1 = 'qwertyuioplkjhgfdsazxcvbnm1234567890'
-        char2 = 'QWERTYUIOPLKJHGFDSAZXCVBNM0123456789'
-        reset_character = char1 + char2
-        key = ''.join(random.choices(reset_character, k=30))
+        id=checkUser.id
+        token=token_generator(checkUser,id,db)
+        if isinstance(token,dict):
+            return token
         
-        token =f"{key}{checkUser.id}ytrewq"
-    
-        create_token = Apitoken(
-            user_id = checkUser.id,
-            token = token,
-            created_at = datetime.now(),
-            status = 1
-        )
-        db.add(create_token)
-        db.commit()
-        user_data={
-            "first_name":checkUser.first_name,
-            "last_name":checkUser.last_name,
-            "email":checkUser.email,
-            "User_type":checkUser.role
-        }
-        
-        return {"status":1,"msg":"Login successfully","token":token,"User_data":user_data}
     
 @router.post('/validate_token',description="This Route is for Check token")
 def validate_token(token:str=Form(...),db:Session=Depends(get_db)):
