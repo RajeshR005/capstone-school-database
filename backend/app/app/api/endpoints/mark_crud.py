@@ -125,4 +125,69 @@ def edit_mark(token:str=Form(...),exam_allocation_id:int=Form(...),subject_alloc
 
     return {"status":1,"msg":f"Marks updated for students: {updated_students}","invalid_students":invalid_students,"not_found_entries":not_found_entries}
 
+@router.post('view_marks',description="This Route is for View the Marks of the students by themselves and by their class teachers")
+def view_marks(token:str=Form(...),db:Session=Depends(get_db)):
+    get_user=check_token_all(token,db)
+    if isinstance(get_user,dict):
+        return get_user
+    if get_user.role=="student":
+        get_marks_data=db.query(Mark).filter(Mark.student_id==get_user.id,Mark.status==1).all()
+        if not get_marks_data:
+            return{"stauts":0,"msg":"No data available for the User"}
+        get_cls_acad=db.query(StudentClass).filter(StudentClass.student_id==get_user.id).first()
+        if not get_cls_acad:
+            return{"status":0,"msg":"You are not associated with any class"}
+        class_assoc=get_cls_acad.class_academic.classroom_id
+        get_cls=db.query(ClassAcademicAssociation).filter(ClassAcademicAssociation.classroom_id==class_assoc).first()
+        get_std=db.query(Standard).filter(Standard.id==get_cls.classroom.standard_id).first()
+        get_sec=db.query(Section).filter(Section.id==get_cls.classroom.section_id).first()
+        
+        print(class_assoc)
+        grouped_data=[]
+        map_data={}
+        for i in get_marks_data:
+            
+            exam_id=i.exam_allocation_id
+            if exam_id not in map_data:
+                exam_alloc_name=db.query(ExamAllocation).filter(ExamAllocation.id==i.exam_allocation_id).first()
+                
+                map_data[exam_id]={
+                    "Exam Name":exam_alloc_name.exam.exam_name,
+                    "subjects":[]
+            }
+            subj_alloc_name=db.query(SubjectAllocation).filter(SubjectAllocation.id==i.subject_allocation_id).first()
+            
+            map_data[exam_id]["subjects"].append(
+                {
+                "subject Name":subj_alloc_name.subject.subject_name,
+                "mark_obtained":i.mark_obtained,
+                "max_marks":i.max_mark
+                }
+            )
+        grouped_data=list(map_data.values())
+        return [
+            {
+                "student_id":get_user.id,
+                "student Name":f"{get_user.first_name} {get_user.last_name}",
+                "standard":get_std.std_name,
+                "section":get_sec.section_name,
+                "Mark_sheet":grouped_data
+            }
+
+        ]
+    # elif get_user.role=="staff":
+        
+        
+                        
+
+                    
+                        
+                        
+                    
+
+                
+                    
+                
+
+
 
