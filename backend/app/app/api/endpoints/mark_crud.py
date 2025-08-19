@@ -175,7 +175,50 @@ def view_marks(token:str=Form(...),db:Session=Depends(get_db)):
             }
 
         ]
-    # elif get_user.role=="staff":
+    elif get_user.role=="staff":
+        get_classroom=db.query(Classroom).join(Classroom.class_academics).filter(Classroom.class_advisor_id==get_user.id,Classroom.status==1).first()
+        # return get_classroom.class_academics[0].id
+        get_students=db.query(StudentClass).filter(StudentClass.class_academic_id==get_classroom.class_academics[0].id).all()
+
+        final_list=[]
+        for j in get_students:
+            get_marks_data=db.query(Mark).filter(Mark.student_id==j.id,Mark.status==1).all()
+            grouped_data=[]
+            map_data={}
+            for i in get_marks_data:
+                
+                exam_id=i.exam_allocation_id
+                if exam_id not in map_data:
+                    exam_alloc_name=db.query(ExamAllocation).filter(ExamAllocation.id==i.exam_allocation_id).first()
+                    
+                    map_data[exam_id]={
+                        "Exam Name":exam_alloc_name.exam.exam_name,
+                        "subjects":[]
+                }
+                subj_alloc_name=db.query(SubjectAllocation).filter(SubjectAllocation.id==i.subject_allocation_id).first()
+                
+                map_data[exam_id]["subjects"].append(
+                    {
+                    "subject Name":subj_alloc_name.subject.subject_name,
+                    "mark_obtained":i.mark_obtained,
+                    "max_marks":i.max_mark
+                    }
+                )
+            grouped_data=list(map_data.values())
+            final_list.append(
+                {
+                    "student_id":j.id,
+                    "student Name":f"{j.student.first_name} {j.student.last_name}",
+                    "Mark_sheet":grouped_data
+                }
+
+            )
+
+        return final_list  
+            
+
+        
+
         
         
                         

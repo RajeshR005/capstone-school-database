@@ -11,4 +11,4 @@ def create_db():
         conn.execute(text(f'CREATE DATABASE IF NOT EXISTS {db_name}'))
         print(f"Database Created Successfully {db_name}")
 
-create_db()
+# create_db()
